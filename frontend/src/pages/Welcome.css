@@ -1,0 +1,68 @@
+.welcome {
+  min-height: 100vh;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.welcome-header {
+  margin-bottom: 2.5rem;
+}
+
+.welcome-brand {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--purple);
+  margin-bottom: 0.35rem;
+}
+
+.welcome-slogan {
+  font-size: 1.1rem;
+  color: var(--dark-text);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.welcome-tagline {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.welcome-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 320px;
+}
+
+.welcome-btn {
+  display: block;
+  padding: 1rem 1.25rem;
+  background: var(--purple);
+  color: var(--white);
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: var(--shadow);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.welcome-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(108, 78, 255, 0.25);
+}
+
+.welcome-link-history {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--purple);
+  font-weight: 500;
+}
+
+.welcome-link-history:hover {
+  text-decoration: underline;
+}

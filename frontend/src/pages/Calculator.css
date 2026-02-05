@@ -1,0 +1,16 @@
+.feature-desc {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+}
+
+.calc-form {
+  margin-top: 0.5rem;
+}
+
+.form-error {
+  color: #c00;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}

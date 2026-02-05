@@ -1,0 +1,46 @@
+:root {
+  --purple: #6C4EFF;
+  --gold: #FFC857;
+  --white: #FFFFFF;
+  --light-purple: #F4F1FF;
+  --dark-text: #2D1B69;
+  --border: #E6E6E6;
+  --radius: 12px;
+  --shadow: 0 4px 14px rgba(108, 78, 255, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--white);
+  color: var(--dark-text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input, select {
+  font-family: inherit;
+}
+
+input::placeholder {
+  color: #999;
+}
+
+a {
+  color: var(--purple);
+  text-decoration: none;
+}

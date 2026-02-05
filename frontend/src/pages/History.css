@@ -1,0 +1,139 @@
+.history-loading,
+.history-empty {
+  color: #555;
+  font-size: 0.95rem;
+  margin-top: 1rem;
+}
+
+.history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.history-item {
+  margin-bottom: 0.5rem;
+}
+
+.history-item-btn {
+  width: 100%;
+  text-align: left;
+  padding: 1rem;
+  background: var(--light-purple);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--dark-text);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.history-item-btn:hover {
+  box-shadow: var(--shadow);
+}
+
+.history-item-feature {
+  display: block;
+  font-weight: 600;
+  color: var(--purple);
+  margin-bottom: 0.35rem;
+}
+
+.history-item-summary {
+  display: block;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 0.25rem;
+}
+
+.history-item-date {
+  display: block;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.history-clear {
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+.history-detail-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(45, 27, 105, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 1rem;
+  overflow: auto;
+}
+
+.history-detail {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  max-width: 420px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: auto;
+}
+
+.history-detail h3 {
+  font-size: 1.15rem;
+  color: var(--purple);
+  margin-bottom: 1rem;
+}
+
+.history-detail-section {
+  margin-bottom: 1.25rem;
+}
+
+.history-detail-section h4 {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.history-detail-dl {
+  margin: 0;
+}
+
+.history-detail-dl > div {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+.history-detail-dl dt {
+  margin: 0;
+  font-weight: 500;
+  color: var(--dark-text);
+  text-transform: capitalize;
+}
+
+.history-detail-dl dd {
+  margin: 0;
+  font-weight: 600;
+  color: var(--dark-text);
+}
+
+.history-detail-date {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 1rem;
+}
+
+.history-detail-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.history-detail-actions button {
+  flex: 1;
+}
