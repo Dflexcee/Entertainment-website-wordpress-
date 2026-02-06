@@ -46,7 +46,9 @@ function biztools_db(): PDO
     } catch (PDOException $e) {
         header('Content-Type: application/json');
         http_response_code(500);
-        echo json_encode(['error' => 'Database connection failed']);
+        echo json_encode([
+            'error' => 'Database connection failed. Check: (1) MySQL is running in XAMPP, (2) api/.env has correct DB_HOST, DB_NAME, DB_USER, DB_PASS, (3) Database exists – run database/schema.sql in phpMyAdmin.',
+        ]);
         exit;
     }
 

@@ -1,12 +1,13 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { ThemeProvider } from './ThemeContext';
 import Welcome from './pages/Welcome';
 import BudgetToBid from './pages/BudgetToBid';
 import BidToTotal from './pages/BidToTotal';
 import Profit from './pages/Profit';
 import History from './pages/History';
 import UserModal from './components/UserModal';
-import { isSessionValid, getUserPhone } from './api';
+import { isSessionValid, getUserPhone, clearSession } from './api';
 
 export default function App() {
   const [showUserModal, setShowUserModal] = useState(false);
@@ -26,19 +27,26 @@ export default function App() {
     if (!isSessionValid() || !getUserPhone()) setShowUserModal(true);
   };
 
+  const handleLogout = () => {
+    clearSession();
+    setShowUserModal(true);
+  };
+
   return (
-    <BrowserRouter>
-      {sessionChecked && showUserModal && (
-        <UserModal onVerified={onVerified} />
-      )}
-      <Routes>
-        <Route path="/" element={<Welcome onOpenFeature={needUser} />} />
-        <Route path="/budget-to-bid" element={<BudgetToBid />} />
-        <Route path="/bid-to-total" element={<BidToTotal />} />
-        <Route path="/profit" element={<Profit />} />
-        <Route path="/history" element={<History />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        {sessionChecked && showUserModal && (
+          <UserModal onVerified={onVerified} />
+        )}
+        <Routes>
+          <Route path="/" element={<Welcome onOpenFeature={needUser} onLogout={handleLogout} />} />
+          <Route path="/budget-to-bid" element={<BudgetToBid onLogout={handleLogout} />} />
+          <Route path="/bid-to-total" element={<BidToTotal onLogout={handleLogout} />} />
+          <Route path="/profit" element={<Profit onLogout={handleLogout} />} />
+          <Route path="/history" element={<History onLogout={handleLogout} />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }

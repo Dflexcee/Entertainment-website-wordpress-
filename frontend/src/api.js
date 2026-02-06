@@ -63,6 +63,11 @@ export function isSessionValid() {
   return Date.now() - Number(at) < sevenDays;
 }
 
+export function clearSession() {
+  window.localStorage.removeItem('biztools_user_phone');
+  window.localStorage.removeItem('biztools_last_verified_at');
+}
+
 export function formatMoney(n) {
   if (n == null || Number.isNaN(Number(n))) return '—';
   return new Intl.NumberFormat('en-NG', {

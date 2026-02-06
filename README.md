@@ -80,6 +80,8 @@ API base URL: **http://localhost:8000**
 
 (MySQL must still be running in XAMPP.)
 
+**Test database connection:** Open `http://localhost:8000/check-db.php` (or your API base URL + `check-db.php`) in a browser. If you see `"ok": true`, the database is fine and **Save to history** will work.
+
 ### Frontend (React)
 
 ```bash
@@ -90,10 +92,23 @@ npm run dev
 
 Open the URL shown (e.g. **http://localhost:5173**).
 
+**Windows PowerShell:** Use `;` instead of `&&` between commands, or run each line separately. If you get `spawn EPERM` when running `npm run dev`, try running the terminal as Administrator or from a normal Command Prompt/PowerShell window; antivirus can sometimes block Vite’s bundler.
+
 Set the API base URL in the app (e.g. in `.env` or config):
 
 - If API is in htdocs: `VITE_API_BASE=http://localhost/biztools-api`
 - If API is on port 8000: `VITE_API_BASE=http://localhost:8000`
+
+---
+
+## Troubleshooting: "Database connection failed"
+
+Save to history and user verification need MySQL. If you see **Database connection failed**:
+
+1. **Start MySQL** in XAMPP Control Panel (green next to MySQL).
+2. **Create the database and tables** (see “When to Create the Database” above): create `biztools_db`, create a user with access to it, then **Import** `database/schema.sql` in phpMyAdmin.
+3. **Set api/.env**: copy `api/.env.example` to `api/.env` and set `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS` to match your MySQL user and database.
+4. **Test:** open `http://localhost:8000/check-db.php` (or your API URL + `check-db.php`). You should see `{"ok":true,...}`.
 
 ---
 
@@ -120,7 +135,7 @@ BizTools/
 
 1. **Budget → Bid** – Total (with VAT/fees) → estimated bid
 2. **Bid → Total** – Bid amount → total payable
-3. **Selling Price & Profit** – Cost + expenses + margin → selling price
+3. **Selling Price & Profit** – Cost + expenses; enter a **selling multiple** (e.g. 3 = sell at 3× cost). Example: ₦10,000 + ₦5,000 with multiple 3 → selling price ₦45,000.
 4. **History** – Save, view (full inputs + results), delete, clear
 
 User identification: full name + Nigeria phone (11 digits). No password. Session 7 days.

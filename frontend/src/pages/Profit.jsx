@@ -3,12 +3,14 @@ import Layout from '../components/Layout';
 import { api, formatMoney, getUserPhone, isSessionValid } from '../api';
 import './Calculator.css';
 
-const DESC = 'Calculate your profit and ideal selling price. Enter your costs and desired margin. Make smarter pricing decisions.';
+const DESC = 'Calculate your profit and selling price. Total cost = purchase + expenses. Selling price = cost x multiple. Extra fee is added on top of selling price.';
 
-export default function Profit() {
+export default function Profit({ onLogout }) {
   const [purchasePrice, setPurchasePrice] = useState('');
   const [totalExpenses, setTotalExpenses] = useState('');
-  const [profitPercent, setProfitPercent] = useState('');
+  const [sellingMultiple, setSellingMultiple] = useState('');
+  const [includeExtraFee, setIncludeExtraFee] = useState(false);
+  const [extraFee, setExtraFee] = useState('');
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,11 +20,16 @@ export default function Profit() {
     e.preventDefault();
     setError('');
     setResult(null);
-    const purchase = Number(purchasePrice);
-    const expenses = Number(totalExpenses);
-    const pct = Number(profitPercent);
+    const purchase = Number(purchasePrice) || 0;
+    const expenses = Number(totalExpenses) || 0;
+    const multiple = Number(sellingMultiple) || 0;
+    const extra = includeExtraFee ? (Number(extraFee) || 0) : 0;
     if (!Number.isFinite(purchase) || purchase < 0) {
       setError('Enter a valid purchase price.');
+      return;
+    }
+    if (!Number.isFinite(multiple) || multiple <= 0) {
+      setError('Enter a selling multiple greater than 0 (e.g. 3 for 3x cost).');
       return;
     }
     setLoading(true);
@@ -30,7 +37,8 @@ export default function Profit() {
       const data = await api.calculateProfit({
         purchase_price: purchase,
         total_expenses: expenses,
-        profit_percentage: pct,
+        selling_multiple: multiple,
+        extra_fee: extra,
       });
       setResult(data);
     } catch (err) {
@@ -43,7 +51,9 @@ export default function Profit() {
   const handleReset = () => {
     setPurchasePrice('');
     setTotalExpenses('');
-    setProfitPercent('');
+    setSellingMultiple('');
+    setIncludeExtraFee(false);
+    setExtraFee('');
     setResult(null);
     setError('');
     setSaved(false);
@@ -63,7 +73,8 @@ export default function Profit() {
         {
           purchase_price: purchasePrice,
           total_expenses: totalExpenses,
-          profit_percentage: profitPercent,
+          selling_multiple: sellingMultiple,
+          extra_fee: includeExtraFee ? (Number(extraFee) || 0) : 0,
         },
         result
       );
@@ -74,11 +85,11 @@ export default function Profit() {
   };
 
   return (
-    <Layout title="Selling Price & Profit">
+    <Layout title="Selling Price & Profit" onLogout={onLogout}>
       <p className="feature-desc">{DESC}</p>
       <form onSubmit={handleCalculate} className="calc-form">
         <div className="form-group">
-          <label>Purchase Price (₦)</label>
+          <label>Purchase Price</label>
           <input
             type="number"
             step="any"
@@ -89,7 +100,7 @@ export default function Profit() {
           />
         </div>
         <div className="form-group">
-          <label>Total Expenses (₦)</label>
+          <label>Total Expenses</label>
           <input
             type="number"
             step="any"
@@ -100,20 +111,59 @@ export default function Profit() {
           />
         </div>
         <div className="form-group">
-          <label>Profit (%)</label>
+          <label>Selling multiple (x cost)</label>
           <input
             type="number"
             step="any"
-            min="0"
-            value={profitPercent}
-            onChange={(e) => setProfitPercent(e.target.value)}
-            placeholder="e.g. 20"
+            min="0.01"
+            value={sellingMultiple}
+            onChange={(e) => setSellingMultiple(e.target.value)}
+            placeholder="e.g. 3 = sell at 3x cost"
           />
         </div>
+        <div className="form-group form-group-radio">
+          <span className="radio-label">Include Extra Fee?</span>
+          <div className="radio-group">
+            <label className="radio-option">
+              <input
+                type="radio"
+                name="extraFeeToggle"
+                checked={!includeExtraFee}
+                onChange={() => { setIncludeExtraFee(false); setExtraFee(''); }}
+              />
+              <span className="radio-dot" />
+              No
+            </label>
+            <label className="radio-option">
+              <input
+                type="radio"
+                name="extraFeeToggle"
+                checked={includeExtraFee}
+                onChange={() => setIncludeExtraFee(true)}
+              />
+              <span className="radio-dot" />
+              Yes
+            </label>
+          </div>
+        </div>
+        {includeExtraFee && (
+          <div className="form-group">
+            <label>Extra Fee</label>
+            <input
+              type="number"
+              step="any"
+              min="0"
+              value={extraFee}
+              onChange={(e) => setExtraFee(e.target.value)}
+              placeholder="e.g. 500 (added on top of selling price)"
+            />
+            <span className="form-hint">Added after selling price.</span>
+          </div>
+        )}
         {error && <p className="form-error">{error}</p>}
         <div className="actions-row">
           <button type="submit" className="btn-primary" disabled={loading}>
-            {loading ? 'Calculating…' : 'Calculate'}
+            {loading ? 'Calculating...' : 'Calculate'}
           </button>
           <button type="button" className="btn-secondary" onClick={handleReset}>
             Reset
@@ -124,20 +174,38 @@ export default function Profit() {
       {result && (
         <div className="result-card">
           <div className="result-row">
+            <span>Purchase Cost</span>
+            <span className="result-value">{formatMoney(purchasePrice)}</span>
+          </div>
+          <div className="result-row">
+            <span>Total Expenses</span>
+            <span className="result-value">{formatMoney(totalExpenses)}</span>
+          </div>
+          <div className="result-row">
             <span>Total Cost</span>
-            <span className="result-value">₦{formatMoney(result.total_cost)}</span>
+            <span className="result-value">{formatMoney(result.total_cost)}</span>
           </div>
           <div className="result-row">
-            <span>Profit Value</span>
-            <span className="result-value">₦{formatMoney(result.profit_value)}</span>
+            <span>Selling multiple</span>
+            <span className="result-value">{formatMoney(result.selling_multiple)}x</span>
           </div>
           <div className="result-row">
-            <span>Profit %</span>
-            <span className="result-value">{formatMoney(result.profit_percentage)}%</span>
+            <span>Profit</span>
+            <span className="result-value">{formatMoney(result.profit_value)}</span>
           </div>
-          <div className="result-row highlight">
+          <div className="result-row">
             <span>Selling Price</span>
-            <span className="result-value">₦{formatMoney(result.selling_price)}</span>
+            <span className="result-value">{formatMoney(result.selling_price)}</span>
+          </div>
+          {(result.extra_fee != null && result.extra_fee > 0) && (
+            <div className="result-row">
+              <span>Extra Fee (added on top)</span>
+              <span className="result-value">{formatMoney(result.extra_fee)}</span>
+            </div>
+          )}
+          <div className="result-row highlight">
+            <span>Total Selling Price</span>
+            <span className="result-value">{formatMoney(result.total_selling_price)}</span>
           </div>
           <div className="actions-row" style={{ marginTop: '1rem' }}>
             <button type="button" className="btn-primary" onClick={handleSave} disabled={saved}>

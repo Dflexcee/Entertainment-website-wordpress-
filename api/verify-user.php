@@ -33,9 +33,9 @@ if ($name === '') {
     exit;
 }
 
-if (!preg_match('/^[0-9]{11}$/', $phone)) {
+if (!preg_match('/^[0-9]{4,15}$/', $phone)) {
     http_response_code(400);
-    echo json_encode(['error' => 'Invalid phone number. Use 11 digits (e.g. 08012345678).']);
+    echo json_encode(['error' => 'Invalid phone number. Enter at least 4 digits.']);
     exit;
 }
 

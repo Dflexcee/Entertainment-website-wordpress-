@@ -9,7 +9,7 @@ export default function UserModal({ onVerified }) {
   const [loading, setLoading] = useState(false);
 
   const handlePhoneChange = (e) => {
-    const v = e.target.value.replace(/\D/g, '').slice(0, 11);
+    const v = e.target.value.replace(/\D/g, '').slice(0, 15);
     setPhone(v);
     setError('');
   };
@@ -21,8 +21,8 @@ export default function UserModal({ onVerified }) {
       setError('Please enter your full name.');
       return;
     }
-    if (phone.length !== 11) {
-      setError('Phone must be 11 digits (e.g. 08012345678).');
+    if (phone.length < 4) {
+      setError('Please enter a valid phone number.');
       return;
     }
     setLoading(true);
@@ -39,6 +39,8 @@ export default function UserModal({ onVerified }) {
 
   return (
     <div className="user-modal-overlay">
+      <div className="user-modal-bg" />
+      <div className="user-modal-bg-overlay" />
       <div className="user-modal">
         <h2>Welcome to BizTools</h2>
         <p className="user-modal-sub">Enter your details to continue. No password needed.</p>
@@ -55,7 +57,7 @@ export default function UserModal({ onVerified }) {
             />
           </label>
           <label>
-            Phone Number (11 digits)
+            Phone Number
             <input
               type="tel"
               value={phone}

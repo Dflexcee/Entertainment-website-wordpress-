@@ -5,11 +5,15 @@ import './Calculator.css';
 
 const DESC = 'Turn your budget into the correct bid amount. VAT and fees are removed automatically. Use this when you know how much you want to spend.';
 
-export default function BudgetToBid() {
+export default function BudgetToBid({ onLogout }) {
   const [targetTotal, setTargetTotal] = useState('');
   const [vatPercent, setVatPercent] = useState('');
   const [buyersPremiumPercent, setBuyersPremiumPercent] = useState('');
   const [documentFee, setDocumentFee] = useState('');
+  const [includeExtraFee, setIncludeExtraFee] = useState(false);
+  const [extraFee, setExtraFee] = useState(0);
+  const [payingInCash, setPayingInCash] = useState(false);
+  const [cashFeePercent, setCashFeePercent] = useState(0);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -34,6 +38,9 @@ export default function BudgetToBid() {
         vat_percent: v,
         buyers_premium_percent: bp,
         document_fee: df,
+        extra_fee: includeExtraFee ? (Number(extraFee) || 0) : 0,
+        paying_in_cash: payingInCash,
+        cash_fee_percent: payingInCash ? (Number(cashFeePercent) || 0) : 0,
       });
       setResult(data);
     } catch (err) {
@@ -48,6 +55,10 @@ export default function BudgetToBid() {
     setVatPercent('');
     setBuyersPremiumPercent('');
     setDocumentFee('');
+    setIncludeExtraFee(false);
+    setExtraFee(0);
+    setPayingInCash(false);
+    setCashFeePercent(0);
     setResult(null);
     setError('');
     setSaved(false);
@@ -69,6 +80,9 @@ export default function BudgetToBid() {
           vat_percent: vatPercent,
           buyers_premium_percent: buyersPremiumPercent,
           document_fee: documentFee,
+          extra_fee: includeExtraFee ? (Number(extraFee) || 0) : 0,
+          paying_in_cash: payingInCash,
+          cash_fee_percent: payingInCash ? (Number(cashFeePercent) || 0) : 0,
         },
         result
       );
@@ -79,11 +93,11 @@ export default function BudgetToBid() {
   };
 
   return (
-    <Layout title="Budget → Bid">
+    <Layout title="Budget → Bid" onLogout={onLogout}>
       <p className="feature-desc">{DESC}</p>
       <form onSubmit={handleCalculate} className="calc-form">
         <div className="form-group">
-          <label>Target Total (₦)</label>
+          <label>Target Total</label>
           <input
             type="number"
             step="any"
@@ -105,7 +119,7 @@ export default function BudgetToBid() {
           />
         </div>
         <div className="form-group">
-          <label>Buyer’s Premium (%)</label>
+          <label>Buyer's Premium (%)</label>
           <input
             type="number"
             step="any"
@@ -116,7 +130,7 @@ export default function BudgetToBid() {
           />
         </div>
         <div className="form-group">
-          <label>Document Fee (₦)</label>
+          <label>Document Fee</label>
           <input
             type="number"
             step="any"
@@ -126,10 +140,56 @@ export default function BudgetToBid() {
             placeholder="e.g. 2860"
           />
         </div>
+        <div className="form-group form-group-checkbox">
+          <label>
+            <input
+              type="checkbox"
+              checked={includeExtraFee}
+              onChange={(e) => setIncludeExtraFee(e.target.checked)}
+            />
+            Include Extra Fee
+          </label>
+        </div>
+        {includeExtraFee && (
+          <div className="form-group">
+            <label>Extra Fee</label>
+            <input
+              type="number"
+              step="any"
+              min="0"
+              value={extraFee}
+              onChange={(e) => setExtraFee(Number(e.target.value) || 0)}
+              placeholder="Extra Fee"
+            />
+          </div>
+        )}
+        <div className="form-group form-group-checkbox">
+          <label>
+            <input
+              type="checkbox"
+              checked={payingInCash}
+              onChange={(e) => setPayingInCash(e.target.checked)}
+            />
+            Paying in Cash?
+          </label>
+        </div>
+        {payingInCash && (
+          <div className="form-group">
+            <label>Cash Handling Fee (%)</label>
+            <input
+              type="number"
+              step="any"
+              min="0"
+              value={cashFeePercent}
+              onChange={(e) => setCashFeePercent(Number(e.target.value) || 0)}
+              placeholder="Cash Handling Fee (%)"
+            />
+          </div>
+        )}
         {error && <p className="form-error">{error}</p>}
         <div className="actions-row">
           <button type="submit" className="btn-primary" disabled={loading}>
-            {loading ? 'Calculating…' : 'Calculate'}
+            {loading ? 'Calculating...' : 'Calculate'}
           </button>
           <button type="button" className="btn-secondary" onClick={handleReset}>
             Reset
@@ -141,19 +201,35 @@ export default function BudgetToBid() {
         <div className="result-card">
           <div className="result-row">
             <span>Subtotal</span>
-            <span className="result-value">₦{formatMoney(result.subtotal)}</span>
+            <span className="result-value">{formatMoney(result.subtotal)}</span>
           </div>
           <div className="result-row">
             <span>VAT Amount</span>
-            <span className="result-value">₦{formatMoney(result.vat_amount)}</span>
+            <span className="result-value">{formatMoney(result.vat_amount)}</span>
           </div>
           <div className="result-row">
-            <span>Buyer’s Premium</span>
-            <span className="result-value">₦{formatMoney(result.buyers_premium)}</span>
+            <span>Buyer's Premium</span>
+            <span className="result-value">{formatMoney(result.buyers_premium)}</span>
           </div>
+          <div className="result-row">
+            <span>Document Fee</span>
+            <span className="result-value">{formatMoney(result.document_fee)}</span>
+          </div>
+          {(result.extra_fee != null && result.extra_fee > 0) && (
+            <div className="result-row">
+              <span>Extra Fee</span>
+              <span className="result-value">{formatMoney(result.extra_fee)}</span>
+            </div>
+          )}
+          {(result.cash_fee != null && result.cash_fee > 0) && (
+            <div className="result-row">
+              <span>Cash Handling Fee</span>
+              <span className="result-value">{formatMoney(result.cash_fee)}</span>
+            </div>
+          )}
           <div className="result-row highlight">
             <span>Estimated Bid</span>
-            <span className="result-value">₦{formatMoney(result.estimated_bid)}</span>
+            <span className="result-value">{formatMoney(result.estimated_bid)}</span>
           </div>
           <div className="actions-row" style={{ marginTop: '1rem' }}>
             <button type="button" className="btn-primary" onClick={handleSave} disabled={saved}>
