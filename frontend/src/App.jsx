@@ -6,6 +6,9 @@ import BudgetToBid from './pages/BudgetToBid';
 import BidToTotal from './pages/BidToTotal';
 import Profit from './pages/Profit';
 import History from './pages/History';
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminUserDetail from './pages/AdminUserDetail';
 import UserModal from './components/UserModal';
 import { isSessionValid, getUserPhone, clearSession } from './api';
 
@@ -32,10 +35,12 @@ export default function App() {
     setShowUserModal(true);
   };
 
+  const isAdmin = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
+
   return (
     <ThemeProvider>
       <BrowserRouter>
-        {sessionChecked && showUserModal && (
+        {sessionChecked && showUserModal && !isAdmin && (
           <UserModal onVerified={onVerified} />
         )}
         <Routes>
@@ -44,6 +49,9 @@ export default function App() {
           <Route path="/bid-to-total" element={<BidToTotal onLogout={handleLogout} />} />
           <Route path="/profit" element={<Profit onLogout={handleLogout} />} />
           <Route path="/history" element={<History onLogout={handleLogout} />} />
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/user/:phone" element={<AdminUserDetail />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

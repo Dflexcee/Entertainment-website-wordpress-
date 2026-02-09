@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(del \"c:\\\\xampp\\\\htdocs\\\\BizTools\\\\api\\\\.htaccess\")",
+      "Bash(php -r:*)",
+      "Bash(\"c:/xampp/php/php.exe\" -r \"echo hash\\(''sha256'', ''admin:admin123:biztools_admin_secret''\\);\")",
+      "Bash(curl:*)"
     ]
   }
 }
